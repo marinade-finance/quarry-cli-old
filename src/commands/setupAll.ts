@@ -45,7 +45,7 @@ export async function setupAll(keysDir: string) {
     state: tokadapt,
     outputStorage,
     admin
-  } = await createTokadapt(pointsMint.toBase58(), {
+  } = await createTokadapt(pointsMint.toBase58(), 'MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey', {
     state: keysDir + "/tokadapt.json",
     outputStorage: keysDir + "/mndeStorage.json",
     admin: keysDir + "/admin.json",

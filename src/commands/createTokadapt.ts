@@ -5,7 +5,7 @@ import { connection, tokadaptProgram, TOKADAPT_PROGRAM_ID, walletKeypair } from 
 const expandTilde = require('expand-tilde');
 import * as token from '@solana/spl-token';
 
-export async function createTokadapt(inputToken: string, {
+export async function createTokadapt(inputToken: string, outputToken: string, {
   state,
   outputStorage,
   admin,
@@ -23,6 +23,7 @@ export async function createTokadapt(inputToken: string, {
   simulate: boolean
 }) {
   const inputTokenPubkey = new anchor.web3.PublicKey(inputToken)
+  const outputTokenPubkey = new anchor.web3.PublicKey(outputToken)
   const stateKP = state
     ? anchor.web3.Keypair.fromSecretKey(
       new Uint8Array(JSON.parse(await fs.readFile(expandTilde(state), 'utf-8'))))
@@ -83,7 +84,7 @@ export async function createTokadapt(inputToken: string, {
 
   transaction.add(token.Token.createInitAccountInstruction(
     token.TOKEN_PROGRAM_ID,
-    inputTokenPubkey,
+    outputTokenPubkey,
     outputStorageKP.publicKey,
     outputStorageAuthority));
 

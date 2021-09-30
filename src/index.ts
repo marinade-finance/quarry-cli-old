@@ -114,6 +114,7 @@ program
 program
 .command("create-tokadapt")
 .argument("input-token")
+.argument("output-token")
 .option("--state", "State")
 .option("--output-storage", "Output storage")
 .option("-a, --admin <admin>", "Admin authority")
@@ -121,7 +122,7 @@ program
 .option("--output-source-owner", "Output source owner")
 .option("--output-start-amount", "Output start amount")
 .option("-s, --simulate", "Simulate")
-.action(async (inputToken, options) => { await createTokadapt(inputToken, options) })
+.action(async (inputToken, outputToken, options) => { await createTokadapt(inputToken, outputToken, options) })
 
 
 program
