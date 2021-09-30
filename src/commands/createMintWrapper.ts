@@ -15,13 +15,13 @@ export async function createMintWrapper({
   simulate,
 }: {
   mint?: string,
-  decimals: string,
+  decimals?: string,
   hardcap?: string,
   mintWrapperBase?: string,
   admin?: string,
   simulate: boolean
 }) {
-  const decimalsInt = parseInt(decimals);
+  const decimalsInt = decimals? parseInt(decimals): 9;
   const hardcapLamports = hardcap
     ? new anchor.BN(parseFloat(hardcap) * anchor.web3.LAMPORTS_PER_SOL)
     : new anchor.BN("18446744073709551615");

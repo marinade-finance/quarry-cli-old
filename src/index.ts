@@ -12,6 +12,7 @@ import { showMiner, showMinter, showMintWrapper, showQuarry, showRewarder } from
 import { createQuarry } from "./commands/createQuarry";
 import { setRewardsShare } from "./commands/setRewardsShare";
 import { createTokadapt } from "./commands/createTokadapt";
+import { setupAll } from "./commands/setupAll";
 const expandTilde = require('expand-tilde');
 
 const program = new Command();
@@ -121,6 +122,14 @@ program
 .option("--output-start-amount", "Output start amount")
 .option("-s, --simulate", "Simulate")
 .action(async (inputToken, options) => { await createTokadapt(inputToken, options) })
+
+
+program
+.command("setup-all")
+.argument("keys-dir")
+.action(async (keysDir) => {
+  await setupAll(keysDir)
+})
 
 program.parseAsync(process.argv).then(
   () => process.exit(),
