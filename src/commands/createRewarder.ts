@@ -3,63 +3,36 @@ import * as quarry from '@quarryprotocol/quarry-sdk';
 import * as anchor from '@project-serum/anchor';
 import fs from 'mz/fs';
 const expandTilde = require('expand-tilde');
-import { quarrySDK } from "../global";
+import { quarrySDK, walletKeypair } from "../global";
 import { createMintWrapper } from "./createMintWrapper";
+import { setAnnualRewards } from "./setAnnualRewards";
+import { findMinterAddress } from "@quarryprotocol/quarry-sdk";
 
 
-export async function createRewarder({
-  mintWrapper,
-  mint,
-  decimals,
-  hardcap,
-  mintWrapperBase,
+export async function createRewarder(mintWrapper: string, {
   rewarderBase,
+  hardcap,
   admin,
   annualRewards,
   simulate,
 }: {
-  mintWrapper?: string,
-  mint?: string,
-  decimals: string,
-  hardcap?: string,
-  mintWrapperBase?: string,
   rewarderBase?: string,
+  hardcap?: string,
   admin?: string,
   annualRewards?: string,
   simulate: boolean
 }) {
-  let mintWrapperPubkey;
-  if (mintWrapper) {
-    mintWrapperPubkey = new anchor.web3.PublicKey(mintWrapper);
-  } else {
-    const {
-      mintWrapper: createdMintWrapper
-    } = await createMintWrapper({
-      mint,
-      decimals,
-      hardcap,
-      mintWrapperBase,
-      admin,
-      simulate
-    })
-    mintWrapperPubkey = createdMintWrapper;
-  }
+  const mintWrapperPubkey = new anchor.web3.PublicKey(mintWrapper);
+  
   const baseKP = rewarderBase
     ? anchor.web3.Keypair.fromSecretKey(
       new Uint8Array(JSON.parse(await fs.readFile(expandTilde(rewarderBase), 'utf-8'))))
     : undefined;
 
-  let adminPubkey;
-  let adminKP: anchor.web3.Keypair | undefined;
-  if (admin) {
-    try {
-      adminPubkey = new anchor.web3.PublicKey(admin);
-    } catch (e) {
-      adminKP = anchor.web3.Keypair.fromSecretKey(
-        new Uint8Array(JSON.parse(await fs.readFile(expandTilde(admin), 'utf-8'))));
-      adminPubkey = adminKP.publicKey;
-    }
-  }
+  let adminKP = admin
+  ? anchor.web3.Keypair.fromSecretKey(
+        new Uint8Array(JSON.parse(await fs.readFile(expandTilde(admin), 'utf-8'))))
+        : walletKeypair!;
 
   const hardcapLamports = hardcap
     ? new anchor.BN(parseFloat(hardcap) * anchor.web3.LAMPORTS_PER_SOL)
@@ -71,13 +44,53 @@ export async function createRewarder({
   } = await quarrySDK!.mine.createRewarder({
     mintWrapper: mintWrapperPubkey,
     baseKP,
-    authority: adminPubkey
+    authority: adminKP?.publicKey
   })
 
+  console.log(`Creating rewarder ${rewarderKey.toBase58()}`);
+
+  const [minter, minterBump] = await findMinterAddress(
+    mintWrapperPubkey,
+    rewarderKey,
+    quarrySDK!.mintWrapper.program.programId
+  );
+  const newMinterInstruction = quarrySDK!.mintWrapper.program.instruction.newMinter(minterBump, {
+    accounts: {
+      auth: {
+        mintWrapper: mintWrapperPubkey,
+        admin: adminKP!.publicKey,
+      },
+      minterAuthority: rewarderKey,
+      minter,
+      payer: walletKeypair!.publicKey,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    },
+  });
+  newMinterInstruction.keys[1].isWritable = true; // Temporal hack for fixing https://github.com/QuarryProtocol/quarry/issues/101
+  tx.instructions.push(newMinterInstruction);
+
+  if (!tx.signers.find(s => s.publicKey.equals(adminKP.publicKey))) {
+    tx.addSigners(adminKP)
+  }
+
+  const minterUpdateInstruction = quarrySDK!.mintWrapper.program.instruction.minterUpdate(hardcapLamports, {
+    accounts: {
+      auth: {
+        mintWrapper: mintWrapperPubkey,
+        admin: adminKP!.publicKey,
+      },
+      minter,
+    },
+  });
+  minterUpdateInstruction.keys[1].isWritable = true; // Temporal hack for fixing https://github.com/QuarryProtocol/quarry/issues/101
+  tx.instructions.push(minterUpdateInstruction);
+
+  /*
   const createMinterTx = await quarrySDK!.mintWrapper
     .newMinterWithAllowance(mintWrapperPubkey, rewarderKey, hardcapLamports);
 
   tx = tx.combine(createMinterTx);
+  */
 
   if (simulate) {
     console.log((await tx.simulate()).value.logs);
@@ -85,18 +98,7 @@ export async function createRewarder({
     console.log("tx ", (await tx.confirm()).signature);
 
     if (annualRewards) {
-      const rewarderWrapper = await quarrySDK!.mine.loadRewarderWrapper(rewarderKey);
-
-      const tx = await rewarderWrapper.setAnnualRewards({
-        newAnnualRate: new anchor.BN(parseFloat(annualRewards) * anchor.web3.LAMPORTS_PER_SOL),
-        authority: adminKP?.publicKey
-      })
-
-      if (adminKP && !tx.signers.find(s => s.publicKey.equals(adminKP!.publicKey))) {
-        tx.addSigners(adminKP)
-      }
-
-      console.log("setAnnualRewards tx ", (await tx.confirm()).signature);
+      await setAnnualRewards(rewarderKey.toBase58(), annualRewards, {admin, simulate})
     }
   }
 

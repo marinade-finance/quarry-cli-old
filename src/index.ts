@@ -9,6 +9,9 @@ import { createRewarder } from "./commands/createRewarder";
 import { setAnnualRewards } from "./commands/setAnnualRewards";
 import { setAdmin } from "./commands/setAdmin";
 import { showMiner, showMinter, showMintWrapper, showQuarry, showRewarder } from "./commands/show";
+import { createQuarry } from "./commands/createQuarry";
+import { setRewardsShare } from "./commands/setRewardsShare";
+import { createTokadapt } from "./commands/createTokadapt";
 const expandTilde = require('expand-tilde');
 
 const program = new Command();
@@ -35,16 +38,13 @@ program
 
 program
   .command("create-rewarder")
-  .option("--mint-wrapper <pubkey>", "Mint wrapper")
-  .option("--mint <keypair-or-pubkey>", "Creating mint wrapper: create or use mint")
-  .option("--decimals <decimals>", "Creating mint wrapper: decimals", '9')
-  .option("--hardcap <hardcap>", "Creating mint wrapper: hard cap")
-  .option("--mint-wrapper-base <mintWrapperBase>", "Creating mint wrapper: mint wrapper base")
+  .argument("mintWrapper")
   .option("--rewarder-base <keypair>", "Rewarder address base")
+  .option("--hardcap <hardcap>", "hard cap")
   .option("-a, --admin <admin>", "Admin authority")
   .option("--annual-rewards", "Annual rewards")
   .option("-s, --simulate", "Simulate")
-  .action(async (options) => { await createRewarder(options) })
+  .action(async (mintWrapper, options) => { await createRewarder(mintWrapper, options) })
 
 program
   .command("set-annual-rewards")
@@ -53,6 +53,24 @@ program
   .option("-a, --admin <admin>", "Admin authority")
   .option("-s, --simulate", "Simulate")
   .action(setAnnualRewards)
+
+program
+  .command("create-quarry")
+  .argument("rewarder")
+  .argument("stake-token")
+  .option("-a, --admin <admin>", "Admin authority")
+  .option("--rewards-share <sols>", "Rewards share")
+  .option("-s, --simulate", "Simulate")
+  .action(async (rewarder, stakeToken, options) => { await createQuarry(rewarder, stakeToken, options) })
+
+program
+  .command("set-rewards-share")
+  .argument("rewarder")
+  .argument("stake-token")
+  .argument("rewards-share")
+  .option("-a, --admin <admin>", "Admin authority")
+  .option("-s, --simulate", "Simulate")
+  .action(setRewardsShare)
 
 program
   .command("set-admin")
@@ -92,7 +110,17 @@ program
   .argument("authority")
   .action(showMiner)
 
-
+program
+.command("create-tokadapt")
+.argument("input-token")
+.option("--state", "State")
+.option("--output-storage", "Output storage")
+.option("-a, --admin <admin>", "Admin authority")
+.option("--output-source", "Output source")
+.option("--output-source-owner", "Output source owner")
+.option("--output-start-amount", "Output start amount")
+.option("-s, --simulate", "Simulate")
+.action(async (inputToken, options) => { await createTokadapt(inputToken, options) })
 
 program.parseAsync(process.argv).then(
   () => process.exit(),

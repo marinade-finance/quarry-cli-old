@@ -63,6 +63,19 @@ export async function createMintWrapper({
       admin: adminPubkey
     });
 
+    try {
+      const mintWrapperData = await quarrySDK!.mintWrapper.fetchMintWrapper(mintWrapper)
+      if (mintWrapperData) {
+        console.log(`Mint wrapper ${mintWrapper} already exists`)
+        return {
+          mint: mintWrapperData!.tokenMint,
+          mintWrapper
+        }
+      }
+    } catch (e) {
+
+    }
+
     console.log(`Creating mint wrapper ${mintWrapper} for ${mintPubkey} with admin ${adminPubkey || quarrySDK?.provider.wallet.publicKey}`);
 
     if (simulate) {
@@ -87,6 +100,19 @@ export async function createMintWrapper({
       baseKP: mintWrapperBaseKP,
       admin: adminPubkey
     })
+
+    try {
+      const mintWrapperData = await quarrySDK!.mintWrapper.fetchMintWrapper(mintWrapper)
+      if (mintWrapperData) {
+        console.log(`Mint wrapper ${mintWrapper} already exists`)
+        return {
+          mint: mintWrapperData!.tokenMint,
+          mintWrapper
+        }
+      }
+    } catch (e) {
+
+    }
 
     console.log(`Creating mint wrapper ${mintWrapper} with mint ${outputMint} with admin ${adminPubkey || quarrySDK?.provider.wallet.publicKey}`);
 
