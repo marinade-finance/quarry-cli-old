@@ -32,7 +32,7 @@ export async function setRewardsShare(rewarder: string, stakeToken: string, rewa
 
   const tx = new TransactionEnvelope(quarryWrapper.provider, [
     quarryWrapper.program.instruction.setRewardsShare(
-      new anchor.BN(parseFloat(rewardsShare) * anchor.web3.LAMPORTS_PER_SOL), {
+      new anchor.BN(parseInt(rewardsShare)), {
       accounts: {
         auth: {
           authority: adminPubkey || quarryWrapper.provider.wallet.publicKey,
