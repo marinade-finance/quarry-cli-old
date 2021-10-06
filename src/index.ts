@@ -8,7 +8,7 @@ import { createMintWrapper } from "./commands/createMintWrapper";
 import { createRewarder } from "./commands/createRewarder";
 import { setAnnualRewards } from "./commands/setAnnualRewards";
 import { setAdmin } from "./commands/setAdmin";
-import { showMiner, showMinter, showMintWrapper, showQuarry, showRewarder } from "./commands/show";
+import { showMiner, showMinter, showMintWrapper, showQuarry, showRewarder, showTokadapt } from "./commands/show";
 import { createQuarry } from "./commands/createQuarry";
 import { setRewardsShare } from "./commands/setRewardsShare";
 import { createTokadapt } from "./commands/createTokadapt";
@@ -112,25 +112,30 @@ program
   .action(showMiner)
 
 program
-.command("create-tokadapt")
-.argument("input-token")
-.argument("output-token")
-.option("--state", "State")
-.option("--output-storage", "Output storage")
-.option("-a, --admin <admin>", "Admin authority")
-.option("--output-source", "Output source")
-.option("--output-source-owner", "Output source owner")
-.option("--output-start-amount", "Output start amount")
-.option("-s, --simulate", "Simulate")
-.action(async (inputToken, outputToken, options) => { await createTokadapt(inputToken, outputToken, options) })
+  .command("show-tokadapt")
+  .argument("tokadapt")
+  .action(showTokadapt)
+
+program
+  .command("create-tokadapt")
+  .argument("input-token")
+  .argument("output-token")
+  .option("--state", "State")
+  .option("--output-storage", "Output storage")
+  .option("-a, --admin <admin>", "Admin authority")
+  .option("--output-source", "Output source")
+  .option("--output-source-owner", "Output source owner")
+  .option("--output-start-amount", "Output start amount")
+  .option("-s, --simulate", "Simulate")
+  .action(async (inputToken, outputToken, options) => { await createTokadapt(inputToken, outputToken, options) })
 
 
 program
-.command("setup-all")
-.argument("keys-dir")
-.action(async (keysDir) => {
-  await setupAll(keysDir)
-})
+  .command("setup-all")
+  .argument("keys-dir")
+  .action(async (keysDir) => {
+    await setupAll(keysDir)
+  })
 
 program.parseAsync(process.argv).then(
   () => process.exit(),

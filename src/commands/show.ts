@@ -3,7 +3,7 @@ import { findMinterAddress } from '@quarryprotocol/quarry-sdk';
 import { TransactionEnvelope } from '@saberhq/solana-contrib';
 import fs from 'mz/fs';
 const expandTilde = require('expand-tilde');
-import { quarrySDK, walletKeypair } from "../global";
+import { quarrySDK, tokadaptProgram, walletKeypair } from "../global";
 import * as st from '@saberhq/token-utils';
 
 function lamportsToString(lamports: anchor.BN): string {
@@ -66,10 +66,10 @@ export async function showRewarder(rewarder: string) {
    maxClaimFeeKbps ${rewarderWrapper.rewarderData.maxClaimFeeKbps}
    pauseAuthority ${rewarderWrapper.rewarderData.pauseAuthority}
    isPaused ${rewarderWrapper.rewarderData.isPaused}`);
-   
-   await showMintWrapper(rewarderWrapper.rewarderData.mintWrapper.toString())
 
-   await showMinter(rewarderWrapper.rewarderData.mintWrapper.toString(), rewarder)
+  await showMintWrapper(rewarderWrapper.rewarderData.mintWrapper.toString())
+
+  await showMinter(rewarderWrapper.rewarderData.mintWrapper.toString(), rewarder)
 }
 
 export async function showQuarry(rewarder: string, token: string) {
@@ -80,11 +80,11 @@ export async function showQuarry(rewarder: string, token: string) {
   token ${quarryWrapper.token}
   index ${quarryWrapper.quarryData.index}
   famine ${(quarryWrapper.quarryData.famineTs.byteLength() <= 7)
-    ? new Date(quarryWrapper.quarryData.famineTs.toNumber() * 1000)
-    : 'unlimited'}
+      ? new Date(quarryWrapper.quarryData.famineTs.toNumber() * 1000)
+      : 'unlimited'}
   lastUpdate ${(quarryWrapper.quarryData.lastUpdateTs.byteLength() <= 7)
-    ? new Date(quarryWrapper.quarryData.lastUpdateTs.toNumber() * 1000)
-    : 'undefined'}
+      ? new Date(quarryWrapper.quarryData.lastUpdateTs.toNumber() * 1000)
+      : 'undefined'}
   annualRewardsRate ${lamportsToString(quarryWrapper.computeAnnualRewardsRate())}
   rewardsShare ${quarryWrapper.quarryData.rewardsShare}
   totalTokensDeposited ${lamportsToString(quarryWrapper.quarryData.totalTokensDeposited)}
@@ -106,9 +106,9 @@ export async function showMiner(rewarder: string, token: string, authority: stri
   const rewards = quarryWrapper.payroll.calculateRewardsEarned(
     new anchor.BN(
       Math.round(new Date().getTime() / 1000)),
-      miner.balance,
-      miner.rewardsPerTokenPaid,
-      miner.rewardsEarned
+    miner.balance,
+    miner.rewardsPerTokenPaid,
+    miner.rewardsEarned
   )
 
   console.log(`Miner ${await quarryWrapper.getMinerAddress(authorityPubkey)}
@@ -119,6 +119,22 @@ export async function showMiner(rewarder: string, token: string, authority: stri
   balance ${lamportsToString(miner.balance)}
   index ${miner.index}
   rewards ${lamportsToString(rewards)}`)
-  
+
   await showQuarry(rewarder, token)
+}
+
+export async function showTokadapt(tokadapt: string) {
+  const tokadaptPubkey = new anchor.web3.PublicKey(tokadapt);
+
+  let tokadaptInfo = (await tokadaptProgram!.account.state.fetch(tokadaptPubkey)) as {
+    adminAuthority: anchor.web3.PublicKey,
+    inputMint: anchor.web3.PublicKey,
+    outputStorage: anchor.web3.PublicKey,
+    outputStorageAuthorityBump: number
+  };
+  console.log(`Tokadapt ${tokadaptPubkey.toBase58()}
+  admin: ${tokadaptInfo.adminAuthority.toBase58()}
+  input mint: ${tokadaptInfo.inputMint.toBase58()}
+  output storage: ${tokadaptInfo.outputStorage.toBase58()}
+  output storage authority bump ${tokadaptInfo.outputStorageAuthorityBump}`)
 }
