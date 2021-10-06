@@ -23,7 +23,7 @@ export async function showMintWrapper(mintWrapper: string) {
   console.log(`Mint wrapper ${mintWrapper}
    base ${mintWrapperData.base}
    bump ${mintWrapperData.bump}
-   hard cap ${mintWrapperData.hardCap}
+   hard cap ${lamportsToString(mintWrapperData.hardCap)}
    admin ${mintWrapperData.admin}
    pending admin ${mintWrapperData.pendingAdmin}
    token mint ${mintWrapperData.tokenMint}
