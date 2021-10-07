@@ -53,6 +53,7 @@ program
   .argument("rate")
   .option("-a, --admin <admin>", "Admin authority")
   .option("-s, --simulate", "Simulate")
+  .option("-m, --mint <mints...>", "Mints to update")
   .action(setAnnualRewards)
 
 program
