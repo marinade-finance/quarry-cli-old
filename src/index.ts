@@ -13,6 +13,7 @@ import { createQuarry } from "./commands/createQuarry";
 import { setRewardsShare } from "./commands/setRewardsShare";
 import { createTokadapt } from "./commands/createTokadapt";
 import { setupAll } from "./commands/setupAll";
+import { setupRates } from "./commands/setupRates";
 const expandTilde = require('expand-tilde');
 
 const program = new Command();
@@ -137,6 +138,17 @@ program
   .action(async (keysDir) => {
     await setupAll(keysDir)
   })
+
+program
+  .command('setup-rates')
+  .argument('annual')
+  .option('--msol <points>', 'MSOL farm points')
+  .option('--mlp <points>', 'mLP farm points')
+  .option('-s, --simulate', 'Simulate')
+  .option('-a, --admin <admin>', 'Admin authority')
+  .action(async (annual, options) => {
+    await setupRates(annual, options);
+  });
 
 program.parseAsync(process.argv).then(
   () => process.exit(),

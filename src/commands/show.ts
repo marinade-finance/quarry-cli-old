@@ -10,7 +10,7 @@ function lamportsToString(lamports: anchor.BN): string {
   if (lamports.byteLength() > 7) {
     return "unlimited"
   } else {
-    return (lamports.toNumber() / anchor.web3.LAMPORTS_PER_SOL).toString()
+    return (parseFloat(lamports.toString()) / anchor.web3.LAMPORTS_PER_SOL).toString()
   }
 }
 

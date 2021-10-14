@@ -148,6 +148,18 @@
     tiny-invariant "^1.1.0"
     tslib "^2.3.0"
 
+"@saberhq/solana-contrib@^1.3.17":
+  version "1.3.17"
+  resolved "https://registry.yarnpkg.com/@saberhq/solana-contrib/-/solana-contrib-1.3.17.tgz#5d7a01e57ed023a669b885218ff2b0380221e10c"
+  integrity sha512-hVE+g+rhvol98iv0yx6B1wApbKNbLvY9yBrx5ofrpWLC+LWcsJ4qnTY0ofcVNQqA61M74l4xOX6O1gOKdjynSg==
+  dependencies:
+    "@types/promise-retry" "^1.1.3"
+    "@types/retry" "^0.12.1"
+    promise-retry "^2.0.1"
+    retry "^0.13.1"
+    tiny-invariant "^1.1.0"
+    tslib "^2.3.1"
+
 "@saberhq/token-utils@^1.3.1":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@saberhq/token-utils/-/token-utils-1.3.1.tgz#deeec3a1260cd7493541aab7565416b520f6a557"
@@ -161,6 +173,18 @@
     "@ubeswap/token-math" "^4.2.0"
     tiny-invariant "^1.1.0"
     tslib "^2.3.0"
+
+"@saberhq/token-utils@^1.3.17":
+  version "1.3.17"
+  resolved "https://registry.yarnpkg.com/@saberhq/token-utils/-/token-utils-1.3.17.tgz#92fc5ef2d8aee0d51bb5d87ccdb7a3320ea6a717"
+  integrity sha512-ffqUjKrLU+4po5dVc6aPypXJfK27chUxcH0agAWcG/xjW+OuM5gXhriczSUjDKSvCxyAzNSxSVFZzwG98TUdVw==
+  dependencies:
+    "@saberhq/solana-contrib" "^1.3.17"
+    "@solana/buffer-layout" "^3.0.0"
+    "@solana/spl-token" "^0.1.8"
+    "@ubeswap/token-math" "^4.2.0"
+    tiny-invariant "^1.1.0"
+    tslib "^2.3.1"
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -181,7 +205,7 @@
   dependencies:
     cross-fetch "3.0.6"
 
-"@solana/spl-token@^0.1.5":
+"@solana/spl-token@^0.1.5", "@solana/spl-token@^0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@solana/spl-token/-/spl-token-0.1.8.tgz#f06e746341ef8d04165e21fc7f555492a2a0faa6"
   integrity sha512-LZmYCKcPQDtJgecvWOgT/cnoIQPWjdH+QVyzPcFvyDUiT0DiRjZaam4aqNUyvchLFhzgunv3d9xOoyE34ofdoQ==
@@ -2373,6 +2397,11 @@ retry@^0.12.0:
   resolved "https://registry.yarnpkg.com/retry/-/retry-0.12.0.tgz#1b42a6266a21f07421d1b0b54b7dc167b01c013b"
   integrity sha1-G0KmJmoh8HQh0bC1S33BZ7AcATs=
 
+retry@^0.13.1:
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/retry/-/retry-0.13.1.tgz#185b1587acf67919d63b357349e03537b2484658"
+  integrity sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==
+
 reusify@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/reusify/-/reusify-1.0.4.tgz#90da382b1e126efc02146e90845a88db12925d76"
@@ -2702,7 +2731,7 @@ tslib@^1.8.1, tslib@^1.9.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.3, tslib@^2.3.0:
+tslib@^2.0.3, tslib@^2.3.0, tslib@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
